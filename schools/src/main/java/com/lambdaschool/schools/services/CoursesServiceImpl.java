@@ -1,5 +1,7 @@
 package com.lambdaschool.schools.services;
 
+import com.lambdaschool.schools.exceptions.ResourceFoundException;
+import com.lambdaschool.schools.exceptions.ResourceNotFoundException;
 import com.lambdaschool.schools.models.Course;
 import com.lambdaschool.schools.models.Instructor;
 import com.lambdaschool.schools.models.StudCourses;
@@ -59,7 +61,7 @@ public class CoursesServiceImpl
     public Course findCourseById(long id)
     {
         return courserepos.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Course id " + id + " not found!"));
+            .orElseThrow(() -> new ResourceNotFoundException("Course id " + id + " not found!"));
     }
 
     @Transactional
@@ -67,7 +69,7 @@ public class CoursesServiceImpl
     public void delete(long id)
     {
         courserepos.findById(id)
-            .orElseThrow(() -> new EntityNotFoundException("Course id " + id + " not found!"));
+            .orElseThrow(() -> new ResourceNotFoundException("Course id " + id + " not found!"));
         courserepos.deleteById(id);
     }
 
@@ -80,7 +82,7 @@ public class CoursesServiceImpl
         if (course.getCourseid() != 0)
         {
             Course oldCourse = courserepos.findById(course.getCourseid())
-                .orElseThrow(() -> new EntityNotFoundException("Course id " + course.getCourseid() + " not found!"));
+                .orElseThrow(() -> new ResourceNotFoundException("Course id " + course.getCourseid() + " not found!"));
 
             // delete the students for the old course we are replacing
             for (StudCourses ur : oldCourse.getStudents())
@@ -96,7 +98,7 @@ public class CoursesServiceImpl
         newCourse.setCoursename(course.getCoursename());
         Instructor newInstructor = instructorrepos.findById(course.getInstructor()
             .getInstructorid())
-            .orElseThrow(() -> new EntityNotFoundException("Instructor id " + course.getInstructor()
+            .orElseThrow(() -> new ResourceNotFoundException("Instructor id " + course.getInstructor()
                 .getInstructorid() + " not found!"));
         newCourse.setInstructor(newInstructor);
 
@@ -108,7 +110,7 @@ public class CoursesServiceImpl
             {
                 Student newStudent = studentrepos.findById(sc.getStudent()
                     .getStudentid())
-                    .orElseThrow(() -> new EntityNotFoundException("Instructor id " + sc.getStudent()
+                    .orElseThrow(() -> new ResourceNotFoundException("Instructor id " + sc.getStudent()
                         .getStudentid() + " not found!"));
 
                 newCourse.addStudent(newStudent);
@@ -133,9 +135,9 @@ public class CoursesServiceImpl
         long courseid)
     {
         studentrepos.findById(studentid)
-            .orElseThrow(() -> new EntityNotFoundException("Student id " + studentid + " not found!"));
+            .orElseThrow(() -> new ResourceNotFoundException("Student id " + studentid + " not found!"));
         courserepos.findById(courseid)
-            .orElseThrow(() -> new EntityNotFoundException("Course id " + courseid + " not found!"));
+            .orElseThrow(() -> new ResourceNotFoundException("Course id " + courseid + " not found!"));
 
         if (courserepos.checkStudentCourseCombo(studentid,
             courseid)
@@ -145,7 +147,7 @@ public class CoursesServiceImpl
                 courseid);
         } else
         {
-            throw new EntityNotFoundException("Student and Course Combination Does Not Exists");
+            throw new ResourceNotFoundException("Student and Course Combination Does Not Exists");
         }
     }
 
@@ -156,9 +158,9 @@ public class CoursesServiceImpl
         long courseid)
     {
         studentrepos.findById(studentid)
-            .orElseThrow(() -> new EntityNotFoundException("Student id " + studentid + " not found!"));
+            .orElseThrow(() -> new ResourceNotFoundException("Student id " + studentid + " not found!"));
         courserepos.findById(courseid)
-            .orElseThrow(() -> new EntityNotFoundException("Course id " + courseid + " not found!"));
+            .orElseThrow(() -> new ResourceNotFoundException("Course id " + courseid + " not found!"));
 
         if (courserepos.checkStudentCourseCombo(studentid,
             courseid)
@@ -169,7 +171,7 @@ public class CoursesServiceImpl
                 courseid);
         } else
         {
-            throw new EntityExistsException("Student and Course Combination Already Exists");
+            throw new ResourceFoundException("Student and Course Combination Already Exists");
         }
     }
 
